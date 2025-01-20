@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Website</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            width: 100%;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+        }
+
+        .news-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            width: 90%;
+            max-width: 1200px;
+        }
+
+        .news-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .news-card:hover {
+            transform: scale(1.05);
+        }
+
+        .news-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .news-card-content {
+            padding: 15px;
+        }
+
+        .news-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .news-card p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Latest News</h1>
+    </header>
+    <section id="news-container" class="news-container">
+        <!-- News articles will be displayed here -->
+    </section>
+    <footer>
+        <p>Powered by News API</p>
+    </footer>
+    <script>
+        const apiKey = 'b5088e6a7bdc4b4597eccd2661d97e9f';
+        const newsContainer = document.getElementById('news-container');
+
+        // Fetch news articles from API
+        async function fetchNews() {
+            try {
+                const response = await fetch(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${apiKey}`);
+                const data = await response.json();
+                const articles = data.articles;
+
+                // Clear the container before adding new articles
+                newsContainer.innerHTML = '';
+
+                // Loop through each article and create a card
+                articles.forEach(article => {
+                    const card = document.createElement('div');
+                    card.classList.add('news-card');
+
+                    const img = article.urlToImage ? `<img src="${article.urlToImage}" alt="News image">` : '';
+                    const title = article.title ? `<h3>${article.title}</h3>` : 'No title available';
+                    const description = article.description ? `<p>${article.description}</p>` : 'No description available';
+                    const link = article.url ? `<a href="${article.url}" target="_blank">Read more</a>` : '';
+
+                    card.innerHTML = `
+                        ${img}
+                        <div class="news-card-content">
+                            ${title}
+                            ${description}
+                            ${link}
+                        </div>
+                    `;
+                    newsContainer.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Error fetching news:', error);
+            }
+        }
+
+        // Initial load of news
+        fetchNews();
+    </script>
+</body>
+</html>
